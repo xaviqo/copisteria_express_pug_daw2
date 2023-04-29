@@ -1,0 +1,43 @@
+doctype html
+html
+    head
+        meta(charset='UTF-8')
+        title Copistería Xavi QO con Express y Pug
+        link(rel='stylesheet', href='./style/index.css')
+body
+    main
+        h1 Ejercicio copisteria con Express/Pug - Total Hojas
+            span#total 0
+        div.text-input
+            form(id='form-save' method='POST' action='/api/queue/1')
+                select(id='printer-select' name='printer')
+                    option(value='1') Impresora Simple
+                    option(value='2') Impresora Moderna
+                    option(value='3') Impresora Industrial
+                br
+                textarea(name='text' rows='4' cols='50')
+                br
+                button(type='submit') Enviar
+        div.print-divider
+            each printer in printers
+                div
+                    form(id='form-print' method='POST' action=`/api/print/${printer.id}`)
+                        button(type='submit')
+                            img(class='printer-img' src=`${printer.id}.png`)
+                    div.print-ink
+                        div(style='background-color: black') #{printer.ink.k} %
+                        div(style='background-color: #FFFF00') #{printer.ink.y} %
+                        div(style='background-color: #00FFFF') #{printer.ink.c} %
+                        div(style='background-color: #FF00FF') #{printer.ink.m} %
+                    if printer.queue
+                        table
+                            each q in printer.queue
+                                tr
+                                    td= q
+
+script.
+    const printerSelect = document.getElementById('printer-select');
+    const form = document.querySelector('#form-save');
+    printerSelect.addEventListener('change', () => {
+        form.action = `/api/queue/${printerSelect.value}`;
+    });
